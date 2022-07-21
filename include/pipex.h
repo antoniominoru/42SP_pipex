@@ -6,12 +6,24 @@
 /*   By: aminoru- <aminoru-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 19:56:27 by aminoru-          #+#    #+#             */
-/*   Updated: 2022/07/20 20:27:18 by aminoru-         ###   ########.fr       */
+/*   Updated: 2022/07/21 19:07:49 by aminoru-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
+
+# include <stdio.h>
+# include <unistd.h>
+# include <sys/wait.h>
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <fcntl.h>
+# include <stdlib.h>
+// lib of 42 projects
+# include "../lib/libft/libft.h"
+# include "../lib/libft/get_next_line.h"
+# include "../lib/printf/ft_printf.h"
 
 typedef struct s_pipex
 {
@@ -24,6 +36,17 @@ typedef struct s_pipex
 	char	**cmds;
 	char	**cmd_args;
 	char	*comand;
-}	t_pipex
+}		t_pipex;
 
+int		main(int argc, char **argv, char **envp);
+int		err(char *msg);
+char	*get_cmd(char *cmd, char **paths);
+void	first_child(t_pipex pipex, char **argv, char **envp);
+void	second_child(t_pipex pipex, char **argv, char **envp);
+void	perror_error(char *msg);
+void	close_pipe(t_pipex *pipex);
+void	child_free(t_pipex *pipex);
+void	parent_free(t_pipex	*pipex);
+void	files_open(t_pipex *pipex, int argc, char **argv);
+char	*find_path(char **envp);
 #endif

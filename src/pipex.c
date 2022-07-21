@@ -6,21 +6,35 @@
 /*   By: aminoru- <aminoru-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 19:56:30 by aminoru-          #+#    #+#             */
-/*   Updated: 2022/07/20 20:45:24 by aminoru-         ###   ########.fr       */
+/*   Updated: 2022/07/21 20:16:07 by aminoru-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	files_open(t_pipex pipex, int argc, char **argv);
-char	*find_path(char **envp);
+void	files_open(t_pipex *pipex, int argc, char **argv)
+{
+	if (argc != 5)
+		err("Incorrect numbers of arguments!");
+	pipex->infile = open(argv[1], O_RDONLY);
+	if (pipex->infile == -1)
+		perror_error("No open file at the first argument");
+	pipex->outfile = open(argv[argc - 1], O_RDWR | O_TRUNC | O_CREAT, 0644);
+	if (pipex->outfile == -1)
+		perror_error("No open file at the last argument");
+}
+
+char	*find_path(char **envp)
+{
+	while (ft_strncmp("PATH", *envp, 4))
+		envp++;
+	return (*envp + 5);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 
-	if (argv != 5)
-		err("Incorrect numbers of arguments!");
 	files_open(&pipex, argc, argv);
 	if (pipe(pipex.fd) == -1)
 		perror_error("pipex error");
@@ -37,25 +51,8 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex.pid2 == 0)
 		second_child(pipex, argv, envp);
 	close_pipe(&pipex);
-	wait_pid(pipex.pid1, NULL, 0);
-	wait_pid(pipex.pid2, NULL, 0);
+	waitpid(pipex.pid1, NULL, 0);
+	waitpid(pipex.pid2, NULL, 0);
 	parent_free(&pipex);
 	return (0);
-}
-
-void	files_open(t_pipex pipex, int argc, char **argv)
-{
-	pipex->infile = open(argv[1], O_RDONLY);
-	if (pipex->infile == -1)
-		perror_error("No open file at the first argument");
-	pipex->outfile = open(argv[argc - 1], O_RDWR | O_TRUNC | O_CHEAT, 0000644);
-	if (pipex->outfile == -1)
-		perror_error("No open file at the last argument");
-}
-
-char	*find_path(char **envp)
-{
-	while (ft_strncmp("PATH", *envp, 4))
-		envp++;
-	return (*envp + 5);
 }
