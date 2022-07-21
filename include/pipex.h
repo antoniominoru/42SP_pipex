@@ -6,7 +6,7 @@
 /*   By: aminoru- <aminoru-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 19:56:27 by aminoru-          #+#    #+#             */
-/*   Updated: 2022/07/21 19:07:49 by aminoru-         ###   ########.fr       */
+/*   Updated: 2022/07/21 23:12:24 by aminoru-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,9 @@ typedef struct s_pipex
 }		t_pipex;
 
 int		main(int argc, char **argv, char **envp);
-int		err(char *msg);
 char	*get_cmd(char *cmd, char **paths);
-void	first_child(t_pipex pipex, char **argv, char **envp);
-void	second_child(t_pipex pipex, char **argv, char **envp);
+void	infile_child(t_pipex pipex, char **argv, char **envp);
+void	outfile_child(t_pipex pipex, char **argv, char **envp);
 void	perror_error(char *msg);
 void	close_pipe(t_pipex *pipex);
 void	child_free(t_pipex *pipex);

@@ -6,7 +6,7 @@
 /*   By: aminoru- <aminoru-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 19:56:30 by aminoru-          #+#    #+#             */
-/*   Updated: 2022/07/21 20:16:07 by aminoru-         ###   ########.fr       */
+/*   Updated: 2022/07/21 23:12:13 by aminoru-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 void	files_open(t_pipex *pipex, int argc, char **argv)
 {
-	if (argc != 5)
-		err("Incorrect numbers of arguments!");
 	pipex->infile = open(argv[1], O_RDONLY);
 	if (pipex->infile == -1)
 		perror_error("No open file at the first argument");
@@ -35,6 +33,8 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
 
+	if (argc != 5)
+		perror_error("Incorrect numbers of arguments!");
 	files_open(&pipex, argc, argv);
 	if (pipe(pipex.fd) == -1)
 		perror_error("pipex error");
@@ -44,12 +44,12 @@ int	main(int argc, char **argv, char **envp)
 	if (pipex.pid1 < 0)
 		perror_error("Fork error");
 	if (pipex.pid1 == 0)
-		first_child(pipex, argv, envp);
+		infile_child(pipex, argv, envp);
 	pipex.pid2 = fork();
 	if (pipex.pid2 < 0)
 		perror_error("Fork error");
 	if (pipex.pid2 == 0)
-		second_child(pipex, argv, envp);
+		outfile_child(pipex, argv, envp);
 	close_pipe(&pipex);
 	waitpid(pipex.pid1, NULL, 0);
 	waitpid(pipex.pid2, NULL, 0);

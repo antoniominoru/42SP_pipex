@@ -6,7 +6,7 @@
 /*   By: aminoru- <aminoru-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/20 20:28:40 by aminoru-          #+#    #+#             */
-/*   Updated: 2022/07/21 20:47:31 by aminoru-         ###   ########.fr       */
+/*   Updated: 2022/07/21 23:12:02 by aminoru-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ char	*get_cmd(char *cmd, char **paths)
 	return (NULL);
 }
 
-void	first_child(t_pipex pipex, char **argv, char **envp)
+void	infile_child(t_pipex pipex, char **argv, char **envp)
 {
 	dup2(pipex.fd[1], 1);
 	close(pipex.fd[0]);
@@ -40,13 +40,12 @@ void	first_child(t_pipex pipex, char **argv, char **envp)
 	if (!pipex.comand)
 	{
 		child_free(&pipex);
-		err("first command not found");
-		exit(1);
+		perror_error("first command not found");
 	}
 	execve(pipex.comand, pipex.cmd_args, envp);
 }
 
-void	second_child(t_pipex pipex, char **argv, char **envp)
+void	outfile_child(t_pipex pipex, char **argv, char **envp)
 {
 	dup2(pipex.fd[0], 0);
 	close(pipex.fd[1]);
@@ -56,8 +55,7 @@ void	second_child(t_pipex pipex, char **argv, char **envp)
 	if (!pipex.comand)
 	{
 		child_free(&pipex);
-		err("second command not found");
-		exit(1);
+		perror_error("second command not found");
 	}
 	execve(pipex.comand, pipex.cmd_args, envp);
 }
